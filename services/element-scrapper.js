@@ -1,6 +1,5 @@
-
-import puppeteer from 'puppeteer';
-import { TABLE_EL } from '../utils/constants.js';
+const puppeteer = require('puppeteer');
+const { TABLE_EL } = require('../utils/constants.js');
 
 /**
  * 
@@ -28,6 +27,7 @@ async function scrapeController(site, path, elType) {
   }
 
   await browser.close();
+  console.log(scrapedData)
 
   return scrapedData;
 }
@@ -78,14 +78,12 @@ async function scrapeTable(page, trSelector, tdSelector) {
   const data = await page.evaluate(async ({trSelector, tdSelector}) => {
     const rows = document.querySelectorAll(trSelector);
     return Array.from(rows, row => {
-      
       const columns = row.querySelectorAll(tdSelector)
       return Array.from(columns, (column, idx) => {
         // I can just log it here, but it will render these function un-reusable and hard to extense later
         // if(columns[idx].innerText === target) {
         //   console.log(columns[idx + 1].innerText);
         // }
-
         return column.innerText;
       });
     });
@@ -95,7 +93,7 @@ async function scrapeTable(page, trSelector, tdSelector) {
 }
 
 
-export let privateFunction = {
+let privateFunction = {
   getCookies,
   isCookiesFound,
   scrapeTable
@@ -106,7 +104,12 @@ if(process.env.NODE_ENV !== 'test') {
   privateFunction = undefined;
 }
 
-export {
+// export {
+//   scrapeController,
+//   privateFunction,
+// }
+
+module.exports = {
   scrapeController,
   privateFunction,
 }

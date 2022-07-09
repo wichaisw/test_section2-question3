@@ -14,6 +14,7 @@ function extractNavFromSymbol(arr, symbol) {
   return 'Invalid fund name';
 }
 
-export {
+// export {
+module.exports = {
   extractNavFromSymbol
 }

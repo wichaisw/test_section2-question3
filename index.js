@@ -1,7 +1,8 @@
-import { argv } from 'process';
-import { TABLE_EL } from './utils/constants.js';
-import { scrapeController } from './services/element-scrapper.js';
-import { extractNavFromSymbol } from './services/data-cleaner.js';
+const { argv } = require('process');
+const { TABLE_EL } = require('./utils/constants.js');
+const { scrapeController } = require('./services/element-scrapper.js');
+const { extractNavFromSymbol } = require('./services/data-cleaner.js');
+
 
 let scriptArg = argv[2];
 if(!scriptArg) {
@@ -9,8 +10,9 @@ if(!scriptArg) {
   process.exit();
 }
 
-// node support top-level await since v14
-const data = await scrapeController('https://codequiz.azurewebsites.net/', '', TABLE_EL, scriptArg);
-
-const res = extractNavFromSymbol(data, scriptArg);
-console.log(res);
+(async function waitForScraper() {
+  // node support top-level await since v14
+  const data = await scrapeController('https://codequiz.azurewebsites.net/', '', TABLE_EL);
+  const res = extractNavFromSymbol(data, scriptArg);
+  console.log(res);
+})();
