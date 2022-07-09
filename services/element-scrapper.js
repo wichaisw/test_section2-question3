@@ -27,7 +27,6 @@ async function scrapeController(site, path, elType) {
   }
 
   await browser.close();
-  console.log(scrapedData)
 
   return scrapedData;
 }
