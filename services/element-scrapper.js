@@ -2,7 +2,7 @@
 import puppeteer from 'puppeteer';
 import { TABLE_EL } from '../utils/constants.js';
 
-async function scrapeController(site, path, elType, target) {
+async function scrapeController(site, path, elType) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(site + path);
@@ -13,11 +13,11 @@ async function scrapeController(site, path, elType, target) {
   if(hasCookie) await page.reload();
 
   // internal logger for evaluation
-  page.on('console', msg => console.log(msg.text()));
+  // page.on('console', msg => console.log(msg.text()));
 
   let scrapedData;
   if(elType === TABLE_EL) {
-    scrapedData = await scrapeTable(page, 'tbody > tr', 'td', target);
+    scrapedData = await scrapeTable(page, 'tbody > tr', 'td');
   }
 
   await browser.close();
@@ -47,22 +47,22 @@ function isCookiesFound(cookies, name, value) {
   return hasCookie;
 }
 
-async function scrapeTable(page, trSelector, tdSelector, target) {
-  const data = await page.evaluate(async ({trSelector, tdSelector, target}) => {
+async function scrapeTable(page, trSelector, tdSelector) {
+  const data = await page.evaluate(async ({trSelector, tdSelector}) => {
     const rows = document.querySelectorAll(trSelector);
     return Array.from(rows, row => {
       
       const columns = row.querySelectorAll(tdSelector)
       return Array.from(columns, (column, idx) => {
         // I can just log it here, but it will render these function un-reusable and hard to extense later
-        if(columns[idx].innerText === target) {
-          console.log(columns[idx + 1].innerText);
-        }
+        // if(columns[idx].innerText === target) {
+        //   console.log(columns[idx + 1].innerText);
+        // }
 
         return column.innerText;
       });
     });
-  }, {trSelector, tdSelector, target} );
+  }, {trSelector, tdSelector} );
 
   return data;
 }
