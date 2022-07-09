@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@services/*": ["services/*"],
+    },    
+  },
+  "include": ["tests"]
+}
