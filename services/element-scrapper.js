@@ -2,6 +2,13 @@
 import puppeteer from 'puppeteer';
 import { TABLE_EL } from '../utils/constants.js';
 
+/**
+ * 
+ * @param {string} site 
+ * @param {string} path 
+ * @param {string} elType from constants utils
+ * @returns {string[][] | undefined} array of table rows
+ */
 async function scrapeController(site, path, elType) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
@@ -25,12 +32,25 @@ async function scrapeController(site, path, elType) {
   return scrapedData;
 }
 
+/**
+ * 
+ * @param {puppeteer.Page} page 
+ * @param {querySelector} selecter 
+ * @returns {puppeteer.Protocol.Network.Cookie[]} all cookies on the site
+ */
 async function getCookies(page, selecter) {
   await page.click(selecter);
   const cookies = await page.cookies();
   return cookies;
 }
 
+/**
+ * 
+ * @param {puppeteer.Protocol.Network.Cookie[]} cookies 
+ * @param {string} name cookies name
+ * @param {string} value cookies value
+ * @returns {boolean} is the cookies found
+ */
 function isCookiesFound(cookies, name, value) {
   // look for the cookie in cookies array
   let hasCookie = false;
@@ -47,6 +67,13 @@ function isCookiesFound(cookies, name, value) {
   return hasCookie;
 }
 
+/**
+ * 
+ * @param {puppeteer.Page} page 
+ * @param {querySelector} trSelector 
+ * @param {querySelector} tdSelector 
+ * @returns {string[][] | undefined} array of table rows
+ */
 async function scrapeTable(page, trSelector, tdSelector) {
   const data = await page.evaluate(async ({trSelector, tdSelector}) => {
     const rows = document.querySelectorAll(trSelector);
@@ -67,6 +94,19 @@ async function scrapeTable(page, trSelector, tdSelector) {
   return data;
 }
 
+
+export let privateFunction = {
+  getCookies,
+  isCookiesFound,
+  scrapeTable
+}
+
+// export private functions for testing
+if(process.env.NODE_ENV !== 'test') {
+  privateFunction = undefined;
+}
+
 export {
   scrapeController,
+  privateFunction,
 }
